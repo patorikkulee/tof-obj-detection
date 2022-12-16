@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
                 if is_object(x, y) and going_thru == False:  # starting
                     start_time = datetime.now()
-                    serialnum = start_time.strftime('%Y%m%d-%H%M%S')
+                    serialnum = start_time.strftime('%Y%m%d%H%M%S')
                     going_thru = True
                     take_pic(serialnum)
                     # print("new obj")

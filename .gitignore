@@ -1,2 +1,4 @@
 pictures/
 __pycache__/
+logfile.json
+logfile.txt

@@ -6,17 +6,17 @@ from pywebio.output import *
 # from tof_utils import *
 
 
-def get_size_range(vol):
-    assert vol >= 0
-    big = 200
-    small = 100
+# def get_size_range(vol):
+#     assert vol >= 0
+#     big = 200
+#     small = 100
 
-    if vol > big:
-        return 'large'
-    elif vol < small:
-        return 'small'
-    else:
-        return 'medium'
+#     if vol > big:
+#         return 'large'
+#     elif vol < small:
+#         return 'small'
+#     else:
+#         return 'medium'
 
 
 def show_attributes(x, y, z, vol):
@@ -51,8 +51,7 @@ def show_popup():
             ['file', put_file('hello.text', b'')],
             ['table', put_table([['A', 'B'], ['C', 'D']])]
         ]),
-        put_image(
-            open("hi.jpg", 'rb').read()),
+        put_image(open("hi.jpg", 'rb').read()),
         put_button('Close', onclick=close_popup, outline=True)
     ], size=PopupSize.NORMAL)
 

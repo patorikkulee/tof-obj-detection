@@ -1,5 +1,8 @@
+import os, re
 from datetime import datetime
-import matpl
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+import json
 
 """
 --- 說明 ---
@@ -15,11 +18,22 @@ class obj:
         self.y = y
         self.z = z
         self.serialID = serialID
+        self.volumn = round((self.x * self.y * self.z)/1000, 2)
     
-    def volumn(self):
-        vol_mm = self.x * self.y * self.z
-        vol_cm = vol_mm/1000
-        return round(vol_cm, 2)
+    # def volumn(self):
+    #     vol_mm3 = self.x * self.y * self.z
+    #     vol_cm3 = vol_mm3/1000
+    #     return round(vol_cm3, 2)
+
+    def size(self):
+        assert self.volumn >= 0
+
+        if self.volumn > 200:
+            return 'large'
+        elif self.volumn < 100:
+            return 'small'
+        else:
+            return 'medium'
 
 
 # --- constants ---
@@ -65,3 +79,54 @@ def get_est_z(start, end):
     elapsedTime = elapsedTime.total_seconds() # from timedelta to float
     len_z = elapsedTime * SPEED
     return round(len_z, 2)
+
+
+def log_line(object):
+    objInfo = '# ------------\n'
+    objInfo += f'object ID: {object.serialID}\n'
+    objInfo += f'length of x: {object.x}\n'
+    objInfo += f'length of y: {object.y}\n'
+    objInfo += f'length of z: {object.z}\n'
+    objInfo += f'object volumn: {object.volumn}\n'
+    objInfo += f'object size range: {object.size()}\n'
+
+    os.system(f'echo "{objInfo}" >> logfile.txt')
+
+
+def log_json(object):
+    with open('logfile.json', 'r+') as f:
+        log = json.load(f)
+
+        log[object.serialID] = {}
+        log[object.serialID]['x'] = object.x
+        log[object.serialID]['y'] = object.y
+        log[object.serialID]['z'] = object.z
+        log[object.serialID]['volumn'] = object.volumn
+        log[object.serialID]['size'] = object.size()
+        log[object.serialID]['picture'] = f'pictures/{object.serialID}.jpg'
+
+        f.seek(0)
+        json.dump(log, f, indent=4)
+
+
+# def get_latest_3(logfile:str):
+#     regex = r'# ------------\n'
+#     regex += r'object ID: (\d{12})\n'
+#     regex += r'length of x: (\d+(?:\.\d+)?)\n'
+#     regex += r'length of y: (\d+(?:\.\d+)?)\n'
+#     regex += r'length of z: (\d+(?:\.\d+)?)\n'
+#     regex += r'object volumn: (\d+(?:\.\d+)?)\n'
+#     regex += r'object size range: (\w+))\n'
+
+#     with open(logfile, 'r') as f:
+#         log = f.readlines()
+
+
+if __name__ == "__main__":
+    x = obj(40,20,300,"us")
+    print(x.volumn)
+    print(x.size())
+    # write_log(x)
+    # write_log(x)
+    log_json(x)
+
