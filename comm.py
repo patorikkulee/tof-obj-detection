@@ -4,9 +4,14 @@ import serial
 from datetime import datetime
 from tof_utils import *
 from camera import *
+import pickle
 
 
 regex = r"^uart: (\d+)mm, i2c: (\d+)mm$"  # TODO: modify regex to x and y
+
+def write_pkl(x):
+    with open('theThing.pkl', 'wb') as f:
+        pickle.dump(x, f)
 
 
 if __name__ == '__main__':
@@ -22,13 +27,14 @@ if __name__ == '__main__':
 
             if dist:
                 x, y = int(dist.group(1)), int(dist.group(2))
-                print(x,y)
+                # print(x,y)
 
                 if is_object(x, y) and going_thru == False:  # starting
                     start_time = datetime.now()
                     serialnum = start_time.strftime('%Y%m%d%H%M%S')
                     going_thru = True
                     take_pic(serialnum)
+                    write_pkl(None)
                     # print("new obj")
 
                 if not is_object(x, y) and going_thru == True:  # ending
@@ -40,6 +46,7 @@ if __name__ == '__main__':
                     print(theThing.serialID)
                     print(f"x: {theThing.x}, y: {theThing.y}, z: {theThing.z}, volumn: {theThing.volumn}")
                     log_json(theThing)
+                    write_pkl(theThing)
 
                     going_thru = False
                     measurements = []

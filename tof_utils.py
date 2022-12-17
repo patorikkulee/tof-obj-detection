@@ -79,18 +79,6 @@ def get_est_z(start, end):
     len_z = elapsedTime * SPEED
     return round(len_z, 2)
 
-"""
-def log_line(object):
-    objInfo = '# ------------\n'
-    objInfo += f'object ID: {object.serialID}\n'
-    objInfo += f'length of x: {object.x}\n'
-    objInfo += f'length of y: {object.y}\n'
-    objInfo += f'length of z: {object.z}\n'
-    objInfo += f'object volumn: {object.volumn}\n'
-    objInfo += f'object size range: {object.size()}\n'
-
-    os.system(f'echo "{objInfo}" >> logfile.txt')
-"""
 
 def log_json(object):
     with open('logfile.json', 'r+') as f:
@@ -108,13 +96,27 @@ def log_json(object):
         json.dump(log, f, indent=4)
 
 
-def get_latest_3():
+def get_prev_3():
     with open('logfile.json', 'r+') as f:
         log = json.load(f)
-        serialIDs = sorted(log, reverse=True)[:3]
+        serialIDs = sorted(log, reverse=True)[1:4]
 
-        latest3 = {i:log[i] for i in serialIDs}
-        return latest3
+        prev3 = {i:log[i] for i in serialIDs}
+        return prev3
+
+
+def log_line(entries):
+    objInfo = ''
+    for i in entries:
+        objInfo += '# ------------\n'
+        objInfo += f'object ID: {i}\n'
+        objInfo += f'length of x: {entries[i]["x"]}\n'
+        objInfo += f'length of y: {entries[i]["y"]}\n'
+        objInfo += f'length of z: {entries[i]["z"]}\n'
+        objInfo += f'object volumn: {entries[i]["volumn"]}\n'
+        objInfo += f'object size range: {entries[i]["size"]}\n\n'
+    
+    os.system(f'echo "{objInfo}" > logfile.txt')
 
 
 def draw_distribution(att:str):
@@ -125,6 +127,7 @@ def draw_distribution(att:str):
     data = dict(Counter(data))
     vals = np.array(list(data.values()))
     labels = list(data.keys())
+    print(vals, labels)
 
     plt.pie(vals, labels=labels, autopct='%1.1f%%')
     plt.title(f'Distribution of {att}')
@@ -136,4 +139,5 @@ if __name__ == "__main__":
     # write_log(x)
     # log_json(x)
     draw_distribution('size')
+    # log_line(get_latest_3())
 
