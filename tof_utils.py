@@ -1,8 +1,10 @@
 import os, re
 from datetime import datetime
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # import seaborn as sns
+import numpy as np
 import json
+from collections import Counter
 
 """
 --- 說明 ---
@@ -18,12 +20,8 @@ class obj:
         self.y = y
         self.z = z
         self.serialID = serialID
+        self.pic_path = f'pictures/{self.serialID}.jpg'
         self.volumn = round((self.x * self.y * self.z)/1000, 2)
-    
-    # def volumn(self):
-    #     vol_mm3 = self.x * self.y * self.z
-    #     vol_cm3 = vol_mm3/1000
-    #     return round(vol_cm3, 2)
 
     def size(self):
         assert self.volumn >= 0
@@ -103,30 +101,38 @@ def log_json(object):
         log[object.serialID]['z'] = object.z
         log[object.serialID]['volumn'] = object.volumn
         log[object.serialID]['size'] = object.size()
-        log[object.serialID]['picture'] = f'pictures/{object.serialID}.jpg'
+        log[object.serialID]['picture'] = object.pic_path
 
         f.seek(0)
         json.dump(log, f, indent=4)
 
 
-# def get_latest_3(logfile:str):
-#     regex = r'# ------------\n'
-#     regex += r'object ID: (\d{12})\n'
-#     regex += r'length of x: (\d+(?:\.\d+)?)\n'
-#     regex += r'length of y: (\d+(?:\.\d+)?)\n'
-#     regex += r'length of z: (\d+(?:\.\d+)?)\n'
-#     regex += r'object volumn: (\d+(?:\.\d+)?)\n'
-#     regex += r'object size range: (\w+))\n'
+def get_latest_3():
+    with open('logfile.json', 'r+') as f:
+        log = json.load(f)
+        serialIDs = sorted(log, reverse=True)[:3]
 
-#     with open(logfile, 'r') as f:
-#         log = f.readlines()
+        latest3 = {i:log[i] for i in serialIDs}
+        return latest3
+
+
+def draw_distribution(att:str):
+    with open('logfile.json', 'r') as f:
+        log = json.load(f)
+    
+    data = np.array([log[serialID][att] for serialID in log])
+    data = dict(Counter(data))
+    vals = np.array(list(data.values()))
+    labels = list(data.keys())
+
+    plt.pie(vals, labels=labels, autopct='%1.1f%%')
+    plt.title(f'Distribution of {att}')
+    plt.savefig(f'piecharts/{att}.png')
 
 
 if __name__ == "__main__":
-    x = obj(40,20,300,"us")
-    print(x.volumn)
-    print(x.size())
     # write_log(x)
     # write_log(x)
-    log_json(x)
+    # log_json(x)
+    draw_distribution('size')
 

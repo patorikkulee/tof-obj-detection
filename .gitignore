@@ -1,4 +1,5 @@
-pictures/
 __pycache__/
+pictures/
+piecharts/
 logfile.json
 logfile.txt
