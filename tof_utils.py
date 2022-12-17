@@ -38,15 +38,16 @@ class obj:
 
 THRESHOLD = 6 # mm
 SPEED = 20 # mm/s
-CONVEYOR_DIST = 300 # mm
-GATE_WIDTH = 160 # mm
+CONVEYOR_DIST = 270 # mm
+GATE_WIDTH = 190 # mm
 
 
 # --- functions ---
 
 def is_object(x, y):
-    if CONVEYOR_DIST - x >= THRESHOLD or GATE_WIDTH - y >=THRESHOLD:
-        return True
+    if x!=0 and y!=0:
+        if CONVEYOR_DIST - x >= THRESHOLD or GATE_WIDTH - y >=THRESHOLD:
+            return True
     return False
 
     # xs = [dists[0] for dists in window]
@@ -78,7 +79,7 @@ def get_est_z(start, end):
     len_z = elapsedTime * SPEED
     return round(len_z, 2)
 
-
+"""
 def log_line(object):
     objInfo = '# ------------\n'
     objInfo += f'object ID: {object.serialID}\n'
@@ -89,7 +90,7 @@ def log_line(object):
     objInfo += f'object size range: {object.size()}\n'
 
     os.system(f'echo "{objInfo}" >> logfile.txt')
-
+"""
 
 def log_json(object):
     with open('logfile.json', 'r+') as f:

@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
             if dist:
                 x, y = int(dist.group(1)), int(dist.group(2))
-                # print(x,y)
+                print(x,y)
 
                 if is_object(x, y) and going_thru == False:  # starting
                     start_time = datetime.now()
@@ -38,7 +38,8 @@ if __name__ == '__main__':
                     # print(f'xs: {xs}, ys: {ys}')
                     theThing = obj(get_est_x(xs), get_est_y(ys), get_est_z(start_time, end_time), serialID=serialnum)
                     print(theThing.serialID)
-                    print(f"x: {theThing.x}, y: {theThing.y}, z: {theThing.z}, volumn: {theThing.volumn()}")
+                    print(f"x: {theThing.x}, y: {theThing.y}, z: {theThing.z}, volumn: {theThing.volumn}")
+                    log_json(theThing)
 
                     going_thru = False
                     measurements = []
