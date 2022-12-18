@@ -1,7 +1,6 @@
 import os, re
 from datetime import datetime
 import matplotlib.pyplot as plt
-# import seaborn as sns
 import numpy as np
 import json
 from collections import Counter
@@ -16,19 +15,19 @@ z:輸送帶方向
 
 class obj:
     def __init__(self, x=0, y=0, z=0, serialID=None):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = abs(x)
+        self.y = abs(y)
+        self.z = abs(z)
         self.serialID = serialID
         self.pic_path = f'pictures/{self.serialID}.jpg'
         self.volumn = round((self.x * self.y * self.z)/1000, 2)
 
     def size(self):
-        assert self.volumn >= 0
+        # assert self.volumn >= 0
 
-        if self.volumn > 200:
+        if self.volumn > 400:
             return 'large'
-        elif self.volumn < 100:
+        elif self.volumn < 250:
             return 'small'
         else:
             return 'medium'
@@ -37,9 +36,9 @@ class obj:
 # --- constants ---
 
 THRESHOLD = 6 # mm
-SPEED = 20 # mm/s
-CONVEYOR_DIST = 270 # mm
-GATE_WIDTH = 190 # mm
+SPEED = 16 # mm/s
+CONVEYOR_DIST = 418 # mm
+GATE_WIDTH = 173 # mm
 
 
 # --- functions ---
@@ -96,27 +95,27 @@ def log_json(object):
         json.dump(log, f, indent=4)
 
 
-def get_prev_3():
+def get_prev_n(n):
     with open('logfile.json', 'r+') as f:
         log = json.load(f)
-        serialIDs = sorted(log, reverse=True)[1:4]
+        serialIDs = sorted(log, reverse=True)[1:n+1]
 
         prev3 = {i:log[i] for i in serialIDs}
         return prev3
 
 
 def log_line(entries):
-    objInfo = ''
     for i in entries:
-        objInfo += '# ------------\n'
+        objInfo = '# ------------\n'
         objInfo += f'object ID: {i}\n'
         objInfo += f'length of x: {entries[i]["x"]}\n'
         objInfo += f'length of y: {entries[i]["y"]}\n'
         objInfo += f'length of z: {entries[i]["z"]}\n'
         objInfo += f'object volumn: {entries[i]["volumn"]}\n'
-        objInfo += f'object size range: {entries[i]["size"]}\n\n'
+        objInfo += f'object size range: {entries[i]["size"]}'
     
-    os.system(f'echo "{objInfo}" > logfile.txt')
+        os.system(f'echo "{objInfo}" > IDfolder/{i}.txt')
+        objInfo = ''
 
 
 def draw_distribution(att:str):
@@ -127,7 +126,6 @@ def draw_distribution(att:str):
     data = dict(Counter(data))
     vals = np.array(list(data.values()))
     labels = list(data.keys())
-    print(vals, labels)
 
     plt.pie(vals, labels=labels, autopct='%1.1f%%')
     plt.title(f'Distribution of {att}')

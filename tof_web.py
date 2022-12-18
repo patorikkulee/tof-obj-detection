@@ -56,7 +56,7 @@ def put_history(data):
 
 
 def show_prev():
-    popup('Previous 3 objects', put_history(get_prev_3()), size=PopupSize.NORMAL)
+    popup('Previous 3 objects', put_history(get_prev_n(3)), size=PopupSize.NORMAL)
 
 
 def show_charts():

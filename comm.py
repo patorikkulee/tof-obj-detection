@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
             if dist:
                 x, y = int(dist.group(1)), int(dist.group(2))
-                # print(x,y)
+                print(x,y)
 
                 if is_object(x, y) and going_thru == False:  # starting
                     start_time = datetime.now()
