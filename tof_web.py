@@ -6,6 +6,18 @@ import asyncio
 from tof_utils import *
 import pickle
 
+from time import sleep
+import RPi.GPIO as GPIO
+ledlargered = 11
+ledmediumyellow = 13
+ledsmallblue = 15
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(ledlargered, GPIO.OUT)
+GPIO.setup(ledmediumyellow, GPIO.OUT)
+GPIO.setup(ledsmallblue, GPIO.OUT)
+
+#arduino_port = '/dev/ttyACM0'
+#board = pyfirmata.Arduino(arduino_port)
 
 default_style = "max-height: 250px;border: 2px solid #fff;border-radius: 25px;"
 
@@ -88,6 +100,21 @@ async def main():
             newobj = read_pkl()
             if newobj:
                 print(newobj)
+
+                print(newobj.size())
+                if newobj.size() == 'large':
+                    GPIO.output(ledlargered,1)
+                    sleep(1)
+                    GPIO.output(ledlargered,0)
+                if newobj.size() == 'medium':
+                    GPIO.output(ledmediumyellow,1)
+                    sleep(1)
+                    GPIO.output(ledmediumyellow,0)
+                if newobj.size() == 'small':
+                    GPIO.output(ledsmallblue,1)
+                    sleep(1)
+                    GPIO.output(ledsmallblue,0)
+
                 with use_scope('newobj', clear=True):
                     put_markdown(r'## Information')
                     put_row(show_attributes(newobj))
@@ -110,4 +137,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    start_server(main, debug=True, port=8080)
+    start_server(main, debug=True, port=8000)

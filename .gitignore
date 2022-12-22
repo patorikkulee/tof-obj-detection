@@ -2,6 +2,7 @@ __pycache__/*.pyc
 pictures/
 piecharts/
 IDfolder/
+videos/
 logfile.json
 logfile.txt
 theThing.pkl

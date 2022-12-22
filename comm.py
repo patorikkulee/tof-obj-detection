@@ -8,6 +8,7 @@ import pickle
 
 
 regex = r"^uart: (\d+)mm, i2c: (\d+)mm$"  # TODO: modify regex to x and y
+arduino_port = '/dev/ttyACM0'
 
 def write_pkl(x):
     with open('theThing.pkl', 'wb') as f:
@@ -15,14 +16,15 @@ def write_pkl(x):
 
 
 if __name__ == '__main__':
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    #ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser = serial.Serial(arduino_port, 9600, timeout=1)
     ser.reset_input_buffer()
     going_thru = False
     measurements = []
 
     while True:
         if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').rstrip()
+            line = ser.readline().decode('utf-8', errors='ignore').rstrip()
             dist = re.search(regex, line)
 
             if dist:
@@ -52,5 +54,4 @@ if __name__ == '__main__':
                     measurements = []
 
                 if going_thru:
-                    measurements.append([x, y])
-                
+                    measurements.append([x, y]) 

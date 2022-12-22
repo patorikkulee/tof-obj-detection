@@ -20,12 +20,12 @@ class obj:
         self.z = abs(z)
         self.serialID = serialID
         self.pic_path = f'pictures/{self.serialID}.jpg'
-        self.volumn = round((self.x * self.y * self.z)/1000, 2)
+        self.volumn = round((self.x * self.y * self.z)/1000, 1)
 
     def size(self):
         # assert self.volumn >= 0
 
-        if self.volumn > 400:
+        if self.volumn > 500:
             return 'large'
         elif self.volumn < 250:
             return 'small'
@@ -35,10 +35,10 @@ class obj:
 
 # --- constants ---
 
-THRESHOLD = 6 # mm
+THRESHOLD = 8 # mm 6
 SPEED = 16 # mm/s
-CONVEYOR_DIST = 418 # mm
-GATE_WIDTH = 173 # mm
+CONVEYOR_DIST = 413 # mm
+GATE_WIDTH = 170 # mm
 
 
 # --- functions ---
@@ -60,15 +60,23 @@ def is_object(x, y):
 
 def get_est_x(xs:list):
     real_xs = [CONVEYOR_DIST - x for x in xs]
-    avg_x = sum(real_xs)/len(real_xs)
-    return round(avg_x, 2) # use mean as the estimated distance
+    try:
+        avg_x = round(sum(real_xs)/len(real_xs), 1)
+    except ZeroDivisionError:
+        avg_x = 0
+    #return round(avg_x, 2) # use mean as the estimated distance
+    return avg_x
     # return max(dists, key=dists.count) # use mode as the estimated distance
 
 
 def get_est_y(ys:list):
     real_ys = [GATE_WIDTH - y for y in ys]
-    avg_y = sum(real_ys)/len(real_ys)
-    return round(avg_y, 2) # use mean as the estimated distance
+    try:
+        avg_y = round(sum(real_ys)/len(real_ys), 1)
+    except ZeroDivisionError:
+        avg_y = 0
+    #return round(avg_y, 2) # use mean as the estimated distance
+    return avg_y
     # return max(dists, key=dists.count) # use mode as the estimated distance
 
 
@@ -76,7 +84,7 @@ def get_est_z(start, end):
     elapsedTime = end - start
     elapsedTime = elapsedTime.total_seconds() # from timedelta to float
     len_z = elapsedTime * SPEED
-    return round(len_z, 2)
+    return round(len_z, 1)
 
 
 def log_json(object):
